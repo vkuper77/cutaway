@@ -7,7 +7,6 @@ const image = require('../assets/photo.jpg')
 const icon = require('../assets/react.png')
 const github = require('../assets/github.png')
 const linkedin = require('../assets/linkedin.png')
-const instagram = require('../assets/instagram.png')
 
 const social = [
   { icon: github, name: 'https://github.com/vkuper77' },
@@ -17,30 +16,64 @@ const social = [
   },
 ]
 
+const AnimatedText = () => (
+  <TypingText
+    steps={['I am React Native Developer', 500]}
+    loop={10}
+    blinkCursor={false}
+    editDelay={50}
+    style={[styles.title]}
+  />
+)
+
 const Overlay = ({ isVisible, setIsVisible }) => {
-  const [vIcon, setVIcon] = useState(false)
   const value = useRef(new Animated.Value(0)).current
+  const iconValue = useRef(new Animated.Value(0)).current
+  const tValue = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
     setTimeout(() => {
-      setVIcon(true)
       Animated.timing(value, {
         toValue: 1,
-        duration: 600000,
+        duration: 800000,
         useNativeDriver: 'false',
         easing: Easing.linear,
       }).start()
-    }, 3200)
+      Animated.timing(iconValue, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: 'false',
+      }).start()
+      Animated.timing(tValue, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: 'false',
+        easing: Easing.circle,
+      }).start()
+    }, 2500)
   }, [])
+
   const rotate = value.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '36000deg'],
   })
+
+  const opacity = iconValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  })
+
+  const translateX = tValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-300, 0],
+  })
+
   return (
     <Modal
       isVisible={isVisible}
       animationIn="slideInUp"
       animationOut="slideOutDown"
+      swipeDirection="down"
       backdropOpacity={0.5}
       style={styles.wrapper}
       onBackdropPress={() => setIsVisible(false)}
@@ -49,50 +82,27 @@ const Overlay = ({ isVisible, setIsVisible }) => {
         <View style={styles.wrapperImg}>
           <Image source={image} style={styles.img} />
         </View>
-        <Text style={{ color: '#303841', fontSize: 16 }}>
-          Hi, I'm Vitali Kupratsevich
-        </Text>
+        <Text style={styles.title}>Hi, I'm Vitali Kupratsevich</Text>
         <View>
-          <TypingText
-            steps={['I am React Native Developer', 500]}
-            loop={5}
-            blinkCursor={false}
-            editDelay={60}
-            deleteDelay={10}
-            style={{ color: '#303841', fontSize: 16, marginVertical: 10 }}
+          <AnimatedText />
+          <Animated.Image
+            source={icon}
+            style={[styles.icon, { opacity, transform: [{ rotate }] }]}
           />
-          {vIcon ? (
-            <Animated.Image
-              source={icon}
-              style={{
-                width: 32,
-                height: 32,
-                marginLeft: 10,
-                position: 'absolute',
-                right: -35,
-                top: 4,
-                transform: [{ rotate }],
-              }}
-            />
-          ) : null}
         </View>
-        <View style={{ alignItems: 'flex-start', width: '100%' }}>
+        <View style={styles.wrapperSocial}>
           {social.map((item, i) => {
             return (
-              <View
+              <Animated.View
                 key={i}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginVertical: 5,
-                  justifyContent: 'flex-start',
-                }}
+                style={[
+                  styles.containerSocial,
+                  { transform: [{ translateX }] },
+                ]}
               >
-                <Image source={item.icon} style={{ width: 25, height: 25 }} />
-                <Text style={{ marginLeft: 10, color: '#47555E' }}>
-                  {item.name}
-                </Text>
-              </View>
+                <Image source={item.icon} style={styles.iconSocial} />
+                <Text style={styles.textSocial}>{item.name}</Text>
+              </Animated.View>
             )
           })}
         </View>
@@ -112,7 +122,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#EEEEEE',
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 50,
+    paddingBottom: 200,
     paddingHorizontal: 55,
   },
   wrapperImg: {
@@ -121,10 +131,43 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginBottom: 20,
   },
+  title: {
+    color: '#303841',
+    fontSize: 16,
+    fontWeight: '500',
+    marginTop: 16,
+  },
   img: {
     width: 100,
     height: 100,
     resizeMode: 'cover',
+  },
+  icon: {
+    width: 32,
+    height: 32,
+    marginLeft: 10,
+    position: 'absolute',
+    right: -35,
+    top: 9,
+  },
+  wrapperSocial: {
+    alignItems: 'flex-start',
+    width: '100%',
+    marginTop: 30,
+  },
+  containerSocial: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 5,
+    justifyContent: 'flex-start',
+  },
+  iconSocial: {
+    width: 25,
+    height: 25,
+  },
+  textSocial: {
+    marginLeft: 10,
+    color: '#47555E',
   },
 })
 
