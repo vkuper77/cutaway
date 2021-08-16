@@ -1,14 +1,21 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import Overlay from './components/Overlay'
 
 export default function App() {
+  const [isVisible, setIsVisible] = useState(false)
+  useEffect(() => {
+    setTimeout(() => {
+      setIsVisible(true)
+    }, 1000)
+  }, [])
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
       <StatusBar style="auto" />
+      <Overlay isVisible={isVisible} setIsVisible={setIsVisible} />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -18,4 +25,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+})
